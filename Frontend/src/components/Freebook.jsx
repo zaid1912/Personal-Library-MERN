@@ -64,7 +64,7 @@ function Freebook() {
     <>
       <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 pb-14">
         <div>
-          <h1 className="font-semibold text-xl pb-2">Free Offered Courses</h1>
+          <h1 className="font-semibold text-xl pb-2">About</h1>
           <p>
             Your personal digital library — explore and manage books that you own or plan to read. 
             Keep track of your collection, add new books, and discover valuable content completely free.

@@ -1,7 +1,32 @@
-import React from "react";
+'use client';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import banner from "../../public/Banner.png";
 
 function Banner() {
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchRecommendedBooks();
+  }, []);
+
+  const fetchRecommendedBooks = async () => {
+    try {
+      const response = await fetch("http://localhost:4001/book/recommended");
+      if (response.ok) {
+        const books = await response.json();
+        setRecommendedBooks(books);
+      } else {
+        console.error("Failed to fetch recommended books");
+      }
+    } catch (error) {
+      console.error("Error fetching recommended books:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="max-w-screen-2xl container mx-auto md:px-20 px-4 flex flex-col md:flex-row my-10">
@@ -12,23 +37,64 @@ function Banner() {
               <span className="text-pink-500">books every day!</span>
             </h1>
             <p className="text-sm md:text-xl">
-              Explore a collection of curated books, add new ones to your list, or remove what you no longer need. Whether you're a reader or a contributor, this platform is here to help you grow your personal library with ease and flexibility.
+              Explore a collection of curated books, add new ones to your list,
+              or remove what you no longer need. Whether you're a reader or a
+              contributor, this platform is here to help you grow your personal
+              library with ease and flexibility.
             </p>
-            <label className="input input-bordered flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                className="w-4 h-4 opacity-70"
-              >
-                <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-                <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-              </svg>
-              <input type="text" className="grow" placeholder="Email" />
-            </label>
+
+            {/* Recommended Books Section */}
+            <div className="mt-8">
+              <h2 className="text-xl md:text-2xl font-semibold mb-4 text-white">
+                📚 Recommended Books
+              </h2>
+
+              {loading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-500"></div>
+                </div>
+              ) : recommendedBooks.length === 0 ? (
+                <div className="text-center text-gray-600 bg-pink-50 border border-pink-200 rounded-lg p-6">
+                  <p className="text-lg font-medium mb-2">No books recommended at the moment.</p>
+                  <p className="text-sm">
+                    Please check back later for new recommendations!
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {recommendedBooks.map((book) => (
+                    <div
+                      key={book._id}
+                      className="bg-white rounded-lg shadow-md p-3 hover:shadow-lg transition-shadow duration-300 border"
+                    >
+                      <img
+                        src={book.image}
+                        alt={book.name}
+                        className="w-full h-24 md:h-32 object-cover rounded-md mb-2"
+                      />
+                      <h3 className="font-semibold text-xs md:text-sm text-gray-800 truncate">
+                        {book.name}
+                      </h3>
+                      <p className="text-xs text-gray-600 mb-1">
+                        {book.category}
+                      </p>
+                      <p className="text-pink-500 font-bold text-sm">
+                        ${book.price}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-          <button className="btn mt-6 btn-secondary">Get Started</button>
+
+          <button className="btn mt-6 btn-secondary">
+            <Link to="/course" className="text-white font-semibold">
+              Get Started
+            </Link>
+          </button>
         </div>
+
         <div className="order-1 w-full mt-20 md:w-1/2">
           <img
             src={banner}
